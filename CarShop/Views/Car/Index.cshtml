@@ -1,0 +1,69 @@
+﻿@* @* @using CarShop.Domain.Models *@
+@* @model ListModel<Car> *@
+@model IEnumerable<CarShop.Domain.Entities.Car>
+
+
+
+@{
+    ViewBag.Title = "View";
+
+    var request = ViewContext.HttpContext.Request;
+    var returnUrl = request.Path + request.QueryString.ToUriComponent();
+
+}
+
+<h1>View</h1>
+
+
+<!-- выбор категории -->
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+        @ViewBag.CurrentCategory
+    </button>
+    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+        <li>
+            <a class="dropdown-item active" asp-controller="product"
+               asp-route-category=@null>Все</a>
+        </li>
+        @foreach (var item in Model)
+        {
+            <li>
+                <a class="dropdown-item">
+                    @item.Name
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+
+
+    
+    @* 
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+           *@
+
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var item in Model) {
+    <div class="col">
+        <div class="card">
+            <img src="@item.Image" width="350" class="card-img-top" alt="...">
+            <div class="card-body">
+                    <h5 class="card-title"> @Html.DisplayFor(modelItem => item.Name)</h5>
+                    <p class="card-text">@item.Price</p>
+                    <a asp-controller="Cart" asp-action="Add" asp-route-id="@item.Id" asp-route-returnurl="@returnUrl"
+                       class="btn btn-outline-secondary">Add to cart</a>
+            </div>
+        </div>
+    </div>
+    }
+</div>

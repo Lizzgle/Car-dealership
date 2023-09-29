@@ -1,0 +1,84 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model SelectList
+@{
+    ViewBag.Title = "Index";
+}
+
+    <main class="container">
+        <h1>@ViewData["Lab"]</h1>
+        <h2>Список</h2>
+        <ol type="A">
+            @for(int i = 1; i < 4; i++)
+            {
+                <li>элемент @i</li>
+            }
+        </ol>
+
+        <h2>Форма</h2>
+        <form method="post">
+        <select class="form-select" asp-items="@Model" aria-label="Default select example" name="selectList">
+            
+        </select>
+
+            <!--Чек-боксы-->
+            <div class="row mb-3">
+                <div class="col-sm-10 offset-sm-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkbox1">
+                        <label class="form-check-label" for="gridCheck1">
+                            Чек-бокс 1
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="gridCheck2">
+                        <label class="form-check-label" for="gridCheck2">
+                            Чек-бокс 2
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+
+            <fieldset >
+                <div class="row mb-3 offset-sm-2">
+                    <div class="form-check col-sm-3">
+                        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+                        <label class="form-check-label" for="gridRadios1">
+                            Радио-1
+                        </label>
+                    </div>
+                    <div class="form-check col-sm-3">
+                        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                        <label class="form-check-label" for="gridRadios2">
+                            Радио 2
+                        </label>
+                    </div>
+                    <div class="form-check col-sm-3">
+                        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                        <label class="form-check-label" for="gridRadios2">
+                            Радио 3
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!--Ввод данньх-->
+            <div class="row mb-3">
+                <label for="inputEmail3" class="col-sm-2 col-form-label">Логин</label>
+                <div class="col-sm-10">
+                    <input type="email" class="form-control" id="inputEmail3" placeholder="Введите имя" name="email">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="inputPassword3" class="col-sm-2 col-form-label">Пароль</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" id="inputPassword3" placeholder="Введите пароль" name="password">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+
+    </main>
