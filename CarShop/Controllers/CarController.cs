@@ -15,9 +15,21 @@ namespace CarShop.Controllers
             _carService = carService;
             _carCategoryService = categoryService;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? category)
         {
-            var productResponse = await _carService.GetProductListAsync(null);
+            var productResponse = await _carService.GetProductListAsync(category);
+
+            ResponseData<List<CarCategory>> categories = await _carCategoryService.GetCategoryListAsync();
+
+            ViewData["currentCategory"] = categories.Data
+                                            .FirstOrDefault(c => c.NormalizedName.Equals(category))?
+                                            .Name ?? "Все";
+            
+            if (categories.Success)
+            {
+                ViewData["categories"] = categories.Data;
+            }
+
             if (!productResponse.Success)
                 return NotFound(productResponse.ErrorMessage);
             return View(productResponse.Data.Items);

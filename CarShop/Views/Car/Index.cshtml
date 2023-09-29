@@ -10,6 +10,10 @@
     var request = ViewContext.HttpContext.Request;
     var returnUrl = request.Path + request.QueryString.ToUriComponent();
 
+    var categories = ViewData["Categories"] as List<CarCategory>;
+
+    string? category = request.Query["category"].ToString();
+
 }
 
 <h1>View</h1>
@@ -18,17 +22,18 @@
 <!-- выбор категории -->
 <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-        @ViewBag.CurrentCategory
+        @ViewData["currentCategory"]
     </button>
     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
         <li>
-            <a class="dropdown-item active" asp-controller="product"
+            <a class="dropdown-item active" asp-controller="car"
                asp-route-category=@null>Все</a>
         </li>
-        @foreach (var item in Model)
+        @foreach (var item in categories)
         {
             <li>
-                <a class="dropdown-item">
+                <a class="dropdown-item" asp-controller="car"
+                   asp-route-category="@item.NormalizedName">
                     @item.Name
                 </a>
             </li>
