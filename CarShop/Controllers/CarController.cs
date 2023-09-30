@@ -15,9 +15,9 @@ namespace CarShop.Controllers
             _carService = carService;
             _carCategoryService = categoryService;
         }
-        public async Task<IActionResult> Index(string? category)
+        public async Task<IActionResult> Index(int? pageno, string? category)
         {
-            var productResponse = await _carService.GetProductListAsync(category);
+            var productResponse = await _carService.GetProductListAsync(category, pageno ?? 1);
 
             ResponseData<List<CarCategory>> categories = await _carCategoryService.GetCategoryListAsync();
 
@@ -32,7 +32,7 @@ namespace CarShop.Controllers
 
             if (!productResponse.Success)
                 return NotFound(productResponse.ErrorMessage);
-            return View(productResponse.Data.Items);
+            return View(productResponse.Data);
         }
     }
 }

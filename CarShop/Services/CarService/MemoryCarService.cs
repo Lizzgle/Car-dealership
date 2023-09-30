@@ -1,6 +1,7 @@
 ﻿using CarShop.Domain.Entities;
 using CarShop.Domain.Models;
 using CarShop.Services.CarCategoryService;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace CarShop.Services.CarService
@@ -9,9 +10,11 @@ namespace CarShop.Services.CarService
     {
         private List<Car> _cars;
         private readonly List<CarCategory> _categories;
-        // private readonly IConfiguration _configuration;
-        public MemoryCarService(ICarCategoryService categoryService)
+        private readonly IConfiguration _configuration;
+        public MemoryCarService([FromServices] IConfiguration config,
+            ICarCategoryService categoryService)
         {
+            _configuration = config;
             _categories = categoryService.GetCategoryListAsync()
                 .Result
                 .Data;
@@ -106,16 +109,21 @@ namespace CarShop.Services.CarService
 
             try
             {
+                List<Car> filterData;
                 if (categoryNormalizedName is null)
                 {
-                    response.Data.Items = _cars;
+                    filterData = _cars;
                 }
                 else
                 {
-                    response.Data.Items = _cars.Where(
+                    filterData = _cars.Where(
                         f => f.Category?.NormalizedName.Equals(categoryNormalizedName) ?? false)
                         .ToList();
                 }
+
+                response.Data.Items = SelectPageElements(filterData, pageNo, out int maxPage);
+                response.Data.TotalPages = maxPage;
+                response.Data.CurrentPage = pageNo;
             }
             catch (Exception ex)
             {
@@ -125,6 +133,17 @@ namespace CarShop.Services.CarService
 
 
             return Task.FromResult(response);
+        }
+
+        private List<Car> SelectPageElements(List<Car> filterData, int pageNo, out int maxPage)
+        {
+            int.TryParse(_configuration["ItemsPerPage"], out int pageSize);
+            maxPage = filterData.Count / pageSize + (filterData.Count % pageSize == 0 ? 0 : 1);
+
+            if (pageNo > maxPage)
+                throw new IndexOutOfRangeException("Данной страницы не существует");
+
+            return filterData.Skip(--pageNo * pageSize).Take(pageSize).ToList();
         }
 
         //Task<ResponseData<ListModel<Car>>> ICarService.GetProductListAsync(string? categoryNormalizedName, int pageNo)
