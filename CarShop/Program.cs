@@ -1,3 +1,4 @@
+using CarShop;
 using CarShop.Services.CarCategoryService;
 using CarShop.Services.CarService;
 
@@ -7,6 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ICarCategoryService, MemoryCarCategoryService>();
 builder.Services.AddScoped<ICarService, MemoryCarService>();
+
+var uriData = builder.Configuration.GetSection("UriData").Get<UriData>();
+
+builder.Services.AddHttpClient<ICarService, ApiCarService>
+    (opt => opt.BaseAddress = new Uri(uriData.ApiUri));
+
+builder.Services.AddHttpClient<ICarCategoryService, ApiCategoryService>
+    (opt => opt.BaseAddress = new Uri(uriData.ApiUri));
+
+
 
 var app = builder.Build();
 
