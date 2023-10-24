@@ -7,11 +7,16 @@
        .ToString()?
        .ToLower()
        ?? String.Empty;
+
+    var area = ViewContext.RouteData.Values["area"]?
+    .ToString()?
+    .ToLower()
+    ?? String.Empty;
 }
 
 <a class="navbar-brand" href="#">Car Shop</a>
 <div class="navbar-nav">
-    <a class="nav-item nav-link @(controller == "home" ? "active" : "")" asp-action="Index" asp-controller="Home">Лб 1</a>
+    <a class="nav-item nav-link @(controller == "home" ? "active" : "")" asp-action="Index" asp-controller="Home">Лб 5</a>
     <a class="nav-item nav-link @(controller == "car" ? "active" : "")" asp-action="Index" asp-controller="Car">Каталог</a>
-    <a class="nav-item nav-link" asp-area="Admin" asp-page="/Index">Администрирование</a>
+    <a class="nav-item nav-link @(area == "admin" ? "active" : "")" asp-area="Admin" asp-page="/Index">Администрирование</a>
 </div>

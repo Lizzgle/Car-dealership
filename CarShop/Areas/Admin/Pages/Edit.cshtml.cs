@@ -5,14 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CarShop.API.Data;
 using CarShop.Domain.Entities;
 using CarShop.Services.CarService;
 using CarShop.Domain.Models;
 using CarShop.Services.CarCategoryService;
 
-namespace CarShop.Areas.Admin
+namespace CarShop.Areas.Admin.Pages
 {
     public class EditModel : PageModel
     {
@@ -36,7 +34,7 @@ namespace CarShop.Areas.Admin
                 return NotFound();
             }
 
-            var car =  await _carService.GetProductByIdAsync(id ?? -1);
+            var car = await _carService.GetProductByIdAsync(id ?? -1);
             if (!car.Success)
             {
                 return NotFound();

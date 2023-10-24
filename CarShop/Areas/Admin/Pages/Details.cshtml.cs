@@ -4,38 +4,37 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using CarShop.API.Data;
 using CarShop.Domain.Entities;
+using CarShop.Services.CarService;
 
-namespace CarShop.Areas.Admin
+namespace CarShop.Areas.Admin.Pages
 {
     public class DetailsModel : PageModel
     {
-        private readonly CarShop.API.Data.AppDbContext _context;
+        private readonly ICarService _carService;
 
-        public DetailsModel(CarShop.API.Data.AppDbContext context)
+        public DetailsModel(ICarService carService)
         {
-            _context = context;
+            _carService = carService;
         }
 
-      public Car Car { get; set; } = default!; 
+        public Car Car { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Cars == null)
+            if (id == null || _carService is null)
             {
                 return NotFound();
             }
 
-            var car = await _context.Cars.FirstOrDefaultAsync(m => m.Id == id);
-            if (car == null)
+            var car = await _carService.GetProductByIdAsync(id ?? -1);
+            if (!car.Success)
             {
                 return NotFound();
             }
-            else 
+            else
             {
-                Car = car;
+                Car = car.Data;
             }
             return Page();
         }

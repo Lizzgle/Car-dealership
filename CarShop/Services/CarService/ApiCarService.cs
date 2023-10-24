@@ -111,9 +111,15 @@ namespace CarShop.Services.CarService
             };
         }
 
-        Task ICarService.UpdateProductAsync(int id, Car product, IFormFile? formFile)
+        async Task ICarService.UpdateProductAsync(int id, Car product, IFormFile? formFile)
         {
-            throw new NotImplementedException();
+            var uri = new Uri($"{_httpClient.BaseAddress.AbsoluteUri}cars/{id}");
+            var response = await _httpClient.PutAsJsonAsync(uri, product, _serializerOptions);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError($"-----> Ответ не получен oт сервера(изменение мебели). Error: {response.StatusCode}");
+            }
         }
     }
 }

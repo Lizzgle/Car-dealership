@@ -4,57 +4,55 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using CarShop.API.Data;
 using CarShop.Domain.Entities;
+using CarShop.Services.CarService;
 
-namespace CarShop.Areas.Admin
+namespace CarShop.Areas.Admin.Pages
 {
     public class DeleteModel : PageModel
     {
-        private readonly CarShop.API.Data.AppDbContext _context;
+        private readonly ICarService _carService;
 
-        public DeleteModel(CarShop.API.Data.AppDbContext context)
+        public DeleteModel(ICarService carService)
         {
-            _context = context;
+            _carService = carService;
         }
 
         [BindProperty]
-      public Car Car { get; set; } = default!;
+        public Car Car { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Cars == null)
+            if (id == null || _carService is null)
             {
                 return NotFound();
             }
 
-            var car = await _context.Cars.FirstOrDefaultAsync(m => m.Id == id);
+            var car = await _carService.GetProductByIdAsync(id ?? -1);
 
             if (car == null)
             {
                 return NotFound();
             }
-            else 
+            else
             {
-                Car = car;
+                Car = car.Data;
             }
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null || _context.Cars == null)
+            if (id == null || _carService is null)
             {
                 return NotFound();
             }
-            var car = await _context.Cars.FindAsync(id);
+            var car = await _carService.GetProductByIdAsync(id ?? -1);
 
-            if (car != null)
+            if (car.Success)
             {
-                Car = car;
-                _context.Cars.Remove(Car);
-                await _context.SaveChangesAsync();
+                Car = car.Data;
+                await _carService.DeleteProductAsync(Car.Id);
             }
 
             return RedirectToPage("./Index");
