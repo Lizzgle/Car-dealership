@@ -9,24 +9,53 @@ namespace CarShop.API.Services
     {
         private readonly int _maxPageSize = 20;
         private DbSet<Car> _car;
+        private string _imagesPath;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AppDbContext _dbContext;
 
-        public CarService(AppDbContext dbContext) 
+        public CarService(AppDbContext dbContext,  IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor) 
         {
+            _dbContext = dbContext;
             _car = dbContext.Cars;
+            _imagesPath = Path.Combine(env.WebRootPath, "Images");
+            _httpContextAccessor = httpContextAccessor;
         }
-        public Task<ResponseData<Car>> CreateProductAsync(Car product)
+        public async Task<ResponseData<Car>> CreateProductAsync(Car product)
         {
-            throw new NotImplementedException();
+            await _car.AddAsync(product);
+            _dbContext.SaveChanges();
+
+            return new ResponseData<Car>() { Data = product };
         }
 
-        public Task DeleteProductAsync(int id)
+        public async Task DeleteProductAsync(int id)
         {
-            throw new NotImplementedException();
+            var elem = await _car.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (elem is not null)
+            {
+                _car.Remove(elem);
+                _dbContext.SaveChanges();
+            }
         }
 
-        public Task<ResponseData<Car>> GetProductByIdAsync(int id)
+        public async Task<ResponseData<Car>> GetProductByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var query = _car.AsQueryable().Include(f => f.Category);
+            var elem = await query.FirstOrDefaultAsync(x => x.Id == id);
+            ResponseData<Car> response = new ResponseData<Car>();
+
+            if (elem is not null)
+            {
+                response.Data = elem;
+            }
+            else
+            {
+                response.Success = false;
+                response.ErrorMessage = "Элемента с таким id не существет";
+            }
+
+            return response;
         }
 
         public async Task<ResponseData<ListModel<Car>>> GetProductListAsync(string? categoryNormalizedName,
@@ -75,14 +104,59 @@ namespace CarShop.API.Services
             return response;
         }
 
-        public Task<ResponseData<string>> SaveImageAsync(int id, IFormFile formFile)
+        public async Task<ResponseData<string>> SaveImageAsync(int id, IFormFile formFile)
         {
-            throw new NotImplementedException();
+            var responseData = new ResponseData<string>();
+            var car = await _car.FindAsync(id);
+            if (car == null)
+            {
+                responseData.Success = false;
+                responseData.ErrorMessage = "No item found";
+                return responseData;
+            }
+            var host = "https://" + _httpContextAccessor.HttpContext.Request.Host;
+            
+            if (formFile != null)
+            {
+                // Удалить предыдущее изображение
+                if (!String.IsNullOrEmpty(car.Image))
+                {
+                    var prevImage = Path.GetFileName(car.Image);
+                    File.Delete(Path.Combine(_imagesPath, prevImage));
+                }
+                // Создать имя файла
+                var ext = Path.GetExtension(formFile.FileName);
+                var fName = Path.ChangeExtension(Path.GetRandomFileName(), ext);
+
+                // Сохранить файл
+                using (var fs = new FileStream(Path.Combine(_imagesPath, fName), FileMode.Create))
+                {
+                    await formFile.CopyToAsync(fs);
+                }
+
+
+                // Указать имя файла в объекте
+                car.Image = $"{host}/Images/{fName}";
+                await _dbContext.SaveChangesAsync();
+            }
+            responseData.Data = car.Image;
+            return responseData;
         }
 
-        public Task UpdateProductAsync(int id, Car product)
+        public async Task UpdateProductAsync(int id, Car product)
         {
-            throw new NotImplementedException();
+            var car = await _car.FirstOrDefaultAsync(f => f.Id == id);
+
+            if (car is null)
+                return;
+            car.Price = product.Price;
+            car.Name = product.Name;
+            if (!String.IsNullOrEmpty(product.Image))
+                car.Image = product.Image;
+            if (product.CategoryId != null)
+                car.CategoryId = product.CategoryId;
+            //_furnitures.Entry(furniture).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

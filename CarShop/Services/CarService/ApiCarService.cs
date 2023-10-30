@@ -34,11 +34,13 @@ namespace CarShop.Services.CarService
                                                             _serializerOptions);
             if (response.IsSuccessStatusCode)
             {
-                var data = await response
-                .Content
-                .ReadFromJsonAsync<ResponseData<Car>>
-                (_serializerOptions);
-                return data; // dish;
+                var data = await response.Content.ReadFromJsonAsync<ResponseData<Car>>(_serializerOptions);
+                
+                if (formFile != null)
+                {
+                    await SaveImageAsync(data!.Data.Id, formFile);
+                }
+                return data;
             }
             _logger
             .LogError($"-----> object not created. Error:" +
@@ -50,14 +52,44 @@ namespace CarShop.Services.CarService
                 $"{ response.StatusCode.ToString() }"};
         }
 
-        Task ICarService.DeleteProductAsync(int id)
+        async Task ICarService.DeleteProductAsync(int id)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.DeleteAsync(new Uri($"{_httpClient.BaseAddress.AbsoluteUri}cars/{id}"));
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError($"-----> Данные не получены от сервера(машина по id). Error: {response.StatusCode}");
+            }
         }
 
-        Task<ResponseData<Car>> ICarService.GetProductByIdAsync(int id)
+        async Task<ResponseData<Car>> ICarService.GetProductByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetAsync(new Uri($"{_httpClient.BaseAddress.AbsoluteUri}cars/{id}"));
+            if (response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    return await response.Content
+                                        .ReadFromJsonAsync<ResponseData<Car>>
+                                        (_serializerOptions);
+                }
+                catch (JsonException ex)
+                {
+                    _logger.LogError($"-----> Ошибка: {ex.Message}");
+                    return new ResponseData<Car>
+                    {
+                        Success = false,
+                        ErrorMessage = $"Ошибка: {ex.Message}"
+                    };
+                }
+            }
+            _logger.LogError($"-----> Данные не получены от сервера(М по id). Error: {response.StatusCode}");
+
+            return new ResponseData<Car>
+            {
+                Success = false,
+                ErrorMessage = $"Данные не получены от сервера(Мебель по id). Error:{response.StatusCode}"
+            };
         }
 
         public async Task<ResponseData<ListModel<Car>>> GetProductListAsync(string? categoryNormalizedName,
@@ -116,10 +148,31 @@ namespace CarShop.Services.CarService
             var uri = new Uri($"{_httpClient.BaseAddress.AbsoluteUri}cars/{id}");
             var response = await _httpClient.PutAsJsonAsync(uri, product, _serializerOptions);
 
+            if (formFile != null)
+            {
+                await SaveImageAsync(id, formFile);
+            }
+
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError($"-----> Ответ не получен oт сервера(изменение мебели). Error: {response.StatusCode}");
+                _logger.LogError($"-----> Ответ не получен oт сервера(изменение машины). Error: {response.StatusCode}");
             }
+
         }
+
+        private async Task SaveImageAsync(int id, IFormFile image)
+        {
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{_httpClient.BaseAddress.AbsoluteUri}Cars/{id}")
+            };
+            var content = new MultipartFormDataContent();
+            var streamContent = new StreamContent(image.OpenReadStream());
+            
+            content.Add(streamContent, "formFile", image.FileName);
+            request.Content = content;
+            await _httpClient.SendAsync(request);
     }
+}
 }

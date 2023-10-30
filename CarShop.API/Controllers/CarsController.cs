@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CarShop.API.Data;
 using CarShop.Domain.Entities;
 using CarShop.API.Services;
+using CarShop.Domain.Models;
 
 namespace CarShop.API.Controllers
 {
@@ -15,8 +16,8 @@ namespace CarShop.API.Controllers
     [ApiController]
     public class CarsController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private ICarService _carService;
+
 
         public CarsController(ICarService carService)
         {
@@ -93,6 +94,18 @@ namespace CarShop.API.Controllers
             await _carService.CreateProductAsync(car);
 
             return CreatedAtAction("GetCar", new { id = car.Id }, car);
+        }
+
+        // POST: api/Cars/5
+        [HttpPost("{id}")]
+        public async Task<ActionResult<ResponseData<string>>> PostImage(int id, IFormFile formFile)
+        {
+            var response = await _carService.SaveImageAsync(id, formFile);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return NotFound(response);
         }
 
         // DELETE: api/Cars/5

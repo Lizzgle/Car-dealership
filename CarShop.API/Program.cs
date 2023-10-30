@@ -18,6 +18,8 @@ builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
 
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 //await DbInitializer.SeedData(app);
@@ -28,6 +30,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
 
 app.UseStaticFiles();
 

@@ -19,6 +19,7 @@ namespace CarShop.Areas.Admin.Pages
 
         public SelectList Categories { get; set; }
 
+        [BindProperty]
         public IFormFile? Image { get; set; }
 
         public CreateModel(ICarService carService, ICarCategoryService categoryService)
@@ -51,7 +52,7 @@ namespace CarShop.Areas.Admin.Pages
                 return Page();
             }
 
-            await _carService.CreateProductAsync(Car, null);
+            await _carService.CreateProductAsync(Car, Image);
 
             return RedirectToPage("./Index");
         }

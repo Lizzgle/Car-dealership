@@ -19,13 +19,17 @@ namespace CarShop.Areas.Admin.Pages
 
         public SelectList Categories { get; set; }
 
-        public EditModel(ICarService carService)
+        public EditModel(ICarService carService, ICarCategoryService carCategoryService)
         {
             _carService = carService;
+            _categoryService = carCategoryService;
         }
 
         [BindProperty]
         public Car Car { get; set; } = default!;
+
+        [BindProperty]
+        public IFormFile? Image { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -55,7 +59,7 @@ namespace CarShop.Areas.Admin.Pages
                 return Page();
             }
 
-            await _carService.UpdateProductAsync(Car.Id, Car, null);
+            await _carService.UpdateProductAsync(Car.Id, Car, Image);
 
             return RedirectToPage("./Index");
         }
