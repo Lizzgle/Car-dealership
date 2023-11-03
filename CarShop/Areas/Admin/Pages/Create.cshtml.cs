@@ -19,8 +19,17 @@ namespace CarShop.Areas.Admin.Pages
 
         public SelectList Categories { get; set; }
 
+        IFormFile? image; 
+
         [BindProperty]
-        public IFormFile? Image { get; set; }
+        public IFormFile? Image { get
+            {
+                return image;
+            } set {
+                Console.WriteLine("Before ravno!!!");
+                image = value;
+                Console.WriteLine("Ater ravno!!!!");
+            } }
 
         public CreateModel(ICarService carService, ICarCategoryService categoryService)
         {

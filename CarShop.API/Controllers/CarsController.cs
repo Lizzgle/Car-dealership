@@ -89,11 +89,11 @@ namespace CarShop.API.Controllers
         // POST: api/Cars
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Car>> PostCar(Car car)
+        public async Task<ActionResult<ResponseData<Car>>> PostCar(Car car)
         {
-            await _carService.CreateProductAsync(car);
+            return Ok(await _carService.CreateProductAsync(car));
 
-            return CreatedAtAction("GetCar", new { id = car.Id }, car);
+            //return CreatedAtAction("GetCar", new { id = car.Id }, car);
         }
 
         // POST: api/Cars/5
