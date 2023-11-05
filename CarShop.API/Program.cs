@@ -1,6 +1,7 @@
 using CarShop.API.Data;
 using CarShop.API.Services;
 using CarShop.Domain.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services
+.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(opt =>
+{
+    opt.Authority = builder
+    .Configuration
+    .GetSection("isUri").Value;
+    opt.TokenValidationParameters.ValidateAudience = false;
+    opt.TokenValidationParameters.ValidTypes =
+    new[] { "at+jwt" };
+});
+
 var app = builder.Build();
 
 //await DbInitializer.SeedData(app);
@@ -34,9 +47,9 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseStaticFiles();
-
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

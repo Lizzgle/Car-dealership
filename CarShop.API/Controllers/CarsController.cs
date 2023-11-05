@@ -9,6 +9,7 @@ using CarShop.API.Data;
 using CarShop.Domain.Entities;
 using CarShop.API.Services;
 using CarShop.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarShop.API.Controllers
 {
@@ -59,7 +60,9 @@ namespace CarShop.API.Controllers
 
         // PUT: api/Cars/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutCar(int id, Car car)
         {
             if (id != car.Id)
@@ -89,6 +92,7 @@ namespace CarShop.API.Controllers
         // POST: api/Cars
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ResponseData<Car>>> PostCar(Car car)
         {
             return Ok(await _carService.CreateProductAsync(car));
@@ -98,6 +102,7 @@ namespace CarShop.API.Controllers
 
         // POST: api/Cars/5
         [HttpPost("{id}")]
+        [Authorize]
         public async Task<ActionResult<ResponseData<string>>> PostImage(int id, IFormFile formFile)
         {
             var response = await _carService.SaveImageAsync(id, formFile);
@@ -110,6 +115,7 @@ namespace CarShop.API.Controllers
 
         // DELETE: api/Cars/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteCar(int id)
         {
             try
