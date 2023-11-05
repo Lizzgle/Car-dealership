@@ -1,7 +1,10 @@
 ﻿using CarShop.Domain.Entities;
 using CarShop.Domain.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using System.Configuration;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -9,13 +12,14 @@ namespace CarShop.Services.CarService
 {
     public class ApiCarService : ICarService
     {
-        private readonly HttpClient _httpClient;
+        private HttpClient _httpClient;
         private string _pageSize;
         private JsonSerializerOptions _serializerOptions;
         private ILogger<ApiCarService> _logger;
+        private readonly HttpContext _httpContext;
 
         public ApiCarService(HttpClient httpClient, IConfiguration configuration,
-                            ILogger<ApiCarService> logger)
+                            ILogger<ApiCarService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
             _pageSize = configuration.GetSection("ItemsPerPage").Value;
@@ -24,10 +28,15 @@ namespace CarShop.Services.CarService
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
             _logger = logger;
+            _httpContext = httpContextAccessor.HttpContext;
         }
 
         public async Task<ResponseData<Car>> CreateProductAsync(Car product, IFormFile? formFile)
         {
+            var token = await _httpContext.GetTokenAsync("access_token");
+            _httpClient.DefaultRequestHeaders.Authorization
+                            = new AuthenticationHeaderValue("bearer", token);
+
             var uri = new Uri(_httpClient.BaseAddress.AbsoluteUri + "Cars");
             var response = await _httpClient.PostAsJsonAsync(uri,
                                                             product,
@@ -54,6 +63,10 @@ namespace CarShop.Services.CarService
 
         async Task ICarService.DeleteProductAsync(int id)
         {
+            var token = await _httpContext.GetTokenAsync("access_token");
+            _httpClient.DefaultRequestHeaders.Authorization
+                            = new AuthenticationHeaderValue("bearer", token);
+
             var response = await _httpClient.DeleteAsync(new Uri($"{_httpClient.BaseAddress.AbsoluteUri}cars/{id}"));
 
             if (!response.IsSuccessStatusCode)
@@ -64,6 +77,10 @@ namespace CarShop.Services.CarService
 
         async Task<ResponseData<Car>> ICarService.GetProductByIdAsync(int id)
         {
+            var token = await _httpContext.GetTokenAsync("access_token");
+            _httpClient.DefaultRequestHeaders.Authorization
+                            = new AuthenticationHeaderValue("bearer", token);
+
             var response = await _httpClient.GetAsync(new Uri($"{_httpClient.BaseAddress.AbsoluteUri}cars/{id}"));
             if (response.IsSuccessStatusCode)
             {
@@ -112,6 +129,10 @@ namespace CarShop.Services.CarService
             {
                 urlString.Append(QueryString.Create("pageSize", _pageSize));
             }
+            var token = await _httpContext.GetTokenAsync("access_token");
+            _httpClient.DefaultRequestHeaders.Authorization
+                            = new AuthenticationHeaderValue("bearer", token);
+
             // отправить запрос к API
             var response = await _httpClient.GetAsync(
                                         new Uri(urlString.ToString()));
@@ -145,6 +166,10 @@ namespace CarShop.Services.CarService
 
         async Task ICarService.UpdateProductAsync(int id, Car product, IFormFile? formFile)
         {
+            var token = await _httpContext.GetTokenAsync("access_token");
+            _httpClient.DefaultRequestHeaders.Authorization
+                            = new AuthenticationHeaderValue("bearer", token);
+
             var uri = new Uri($"{_httpClient.BaseAddress.AbsoluteUri}cars/{id}");
             var response = await _httpClient.PutAsJsonAsync(uri, product, _serializerOptions);
 
@@ -162,6 +187,10 @@ namespace CarShop.Services.CarService
 
         private async Task SaveImageAsync(int id, IFormFile image)
         {
+            var token = await _httpContext.GetTokenAsync("access_token");
+            _httpClient.DefaultRequestHeaders.Authorization
+                            = new AuthenticationHeaderValue("bearer", token);
+
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
