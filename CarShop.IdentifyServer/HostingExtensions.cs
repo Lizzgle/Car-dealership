@@ -16,15 +16,7 @@ namespace CarShop.IdentifyServer
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-            //    .AddEntityFrameworkStores<ApplicationDbContext>()
-            //    .AddDefaultTokenProviders();
-
-            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opt
-            //    => opt.SignIn.RequireConfirmedAccount = false);
-
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opt
-=>
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opt=>
             {
                 opt.SignIn.RequireConfirmedAccount = false;
                 opt.Password.RequireNonAlphanumeric = false;

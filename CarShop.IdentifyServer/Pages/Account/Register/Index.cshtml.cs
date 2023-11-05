@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace CarShop.IdentifyServer.Pages.Register
 {
@@ -24,16 +25,19 @@ namespace CarShop.IdentifyServer.Pages.Register
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         //private readonly IEmailSender _emailSender;
+        private readonly IWebHostEnvironment _environment;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger)
+            ILogger<RegisterModel> logger,
+            IWebHostEnvironment environment)
             //IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _environment = environment;
             //_emailSender = emailSender;
         }
 
@@ -50,6 +54,8 @@ namespace CarShop.IdentifyServer.Pages.Register
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
+
+            public IFormFile Image { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
@@ -79,6 +85,11 @@ namespace CarShop.IdentifyServer.Pages.Register
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
+                    if (Input.Image != null)
+                    {
+                        await SaveImageAsync(user.Id);
+                    }
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -110,6 +121,15 @@ namespace CarShop.IdentifyServer.Pages.Register
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private async Task SaveImageAsync(string id)
+        {
+            var ext = Path.GetExtension(Input.Image.FileName);
+            var fileName = Path.ChangeExtension(id, ext);
+            var path = Path.Combine(_environment.ContentRootPath, "Images", fileName);
+            using var stream = System.IO.File.OpenWrite(path);
+            await Input.Image.CopyToAsync(stream);
         }
     }
 }
