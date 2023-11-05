@@ -23,7 +23,7 @@ namespace CarShop.IdentifyServer.Pages.Error
         {
             View = new ViewModel();
 
-            // retrieve error details from identityserver
+            // retrieve error details from IdentityServer
             var message = await _interaction.GetErrorContextAsync(errorId);
             if (message != null)
             {

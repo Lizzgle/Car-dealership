@@ -99,7 +99,7 @@ namespace CarShop.IdentifyServer.Pages.Consent
 
             if (grantedConsent != null)
             {
-                // communicate outcome of consent back to identityserver
+                // communicate outcome of consent back to IdentityServer
                 await _interaction.GrantConsentAsync(request, grantedConsent);
 
                 // redirect back to authorization endpoint

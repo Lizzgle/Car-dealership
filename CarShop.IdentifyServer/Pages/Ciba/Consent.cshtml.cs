@@ -101,7 +101,7 @@ namespace CarShop.IdentifyServer.Pages.Ciba
 
             if (result != null)
             {
-                // communicate outcome of consent back to identityserver
+                // communicate outcome of consent back to IdentityServer
                 await _interaction.CompleteLoginRequestAsync(result);
 
                 return RedirectToPage("/Ciba/All");

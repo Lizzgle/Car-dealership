@@ -12,6 +12,7 @@ namespace CarShop.IdentifyServer
         public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
         {
             builder.Services.AddRazorPages();
+            builder.Services.AddControllers();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -34,7 +35,7 @@ namespace CarShop.IdentifyServer
                     options.Events.RaiseFailureEvents = true;
                     options.Events.RaiseSuccessEvents = true;
 
-                    // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
+                    // see https://docs.duendesoftware.com/IdentityServer/v6/fundamentals/resources/
                     options.EmitStaticAudienceClaim = true;
                 })
                 .AddInMemoryIdentityResources(Config.IdentityResources)
@@ -73,6 +74,8 @@ namespace CarShop.IdentifyServer
 
             app.MapRazorPages()
                 .RequireAuthorization();
+
+            app.MapControllers();
 
             return app;
         }

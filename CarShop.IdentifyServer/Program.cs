@@ -19,6 +19,8 @@ try
         .Enrich.FromLogContext()
         .ReadFrom.Configuration(ctx.Configuration));
 
+
+
     var app = builder
         .ConfigureServices()
         .ConfigurePipeline();
@@ -30,8 +32,10 @@ try
         Log.Information("Seeding database...");
         SeedData.EnsureSeedData(app);
         Log.Information("Done seeding database. Exiting.");
-        //return;
+    //return;
     //}
+
+    app.UseStaticFiles();
 
     app.Run();
 }

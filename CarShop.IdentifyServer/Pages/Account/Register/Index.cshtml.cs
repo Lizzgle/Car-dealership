@@ -127,7 +127,7 @@ namespace CarShop.IdentifyServer.Pages.Register
         {
             var ext = Path.GetExtension(Input.Image.FileName);
             var fileName = Path.ChangeExtension(id, ext);
-            var path = Path.Combine(_environment.ContentRootPath, "Images", fileName);
+            var path = Path.Combine(_environment.WebRootPath, "Images", fileName);
             using var stream = System.IO.File.OpenWrite(path);
             await Input.Image.CopyToAsync(stream);
         }
