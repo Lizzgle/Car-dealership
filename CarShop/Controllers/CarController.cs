@@ -1,5 +1,6 @@
 ﻿using CarShop.Domain.Entities;
 using CarShop.Domain.Models;
+using CarShop.Extensions;
 using CarShop.Services.CarCategoryService;
 using CarShop.Services.CarService;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,11 @@ namespace CarShop.Controllers
 
             if (!productResponse.Success)
                 return NotFound(productResponse.ErrorMessage);
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_CarsPartial", productResponse.Data);
+            }
             return View(productResponse.Data);
         }
     }

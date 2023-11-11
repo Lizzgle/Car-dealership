@@ -1,0 +1,30 @@
+﻿@model ListModel<Car>
+@{
+    var request = ViewContext.HttpContext.Request;
+    var returnUrl = request.Path + request.QueryString.ToUriComponent();
+
+    string? category = request.Query["category"].ToString();
+}
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var item in Model.Items)
+    {
+        <div class="col">
+            <div class="card">
+                <img src="@item.Image" width="350" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title"> @item.Name</h5>
+                    <p class="card-text">@item.Price</p>
+                    <a asp-controller="Cart" asp-action="Add" asp-route-id="@item.Id" asp-route-returnurl="@returnUrl"
+                       class="btn btn-outline-secondary">Add to cart</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+<Pages current-page="@Model.CurrentPage"
+       total-pages="@Model.TotalPages"
+       category="@category">
+</Pages>
