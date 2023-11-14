@@ -1,15 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CarShop.Domain.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CarShop.Views.Shared.Components
 {
-    public class Cart : ViewComponent
+    public class CartViewComponent : ViewComponent
     {
-        private decimal balance;
-        private int countOfProducts;
+        private readonly Cart _cart;
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public CartViewComponent(Cart cart)
         {
-            return View();
+            _cart = cart;
+        }
+
+        public IViewComponentResult Invoke()
+        {
+            return View(_cart);
         }
     }
 }

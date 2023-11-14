@@ -16,6 +16,8 @@ namespace CarShop.Controllers
             _carService = carService;
             _carCategoryService = categoryService;
         }
+        [Route("Catalog")]
+        [Route("Catalog/{category}")]
         public async Task<IActionResult> Index(int? pageno, string? category)
         {
             var productResponse = await _carService.GetProductListAsync(category, pageno ?? 1);

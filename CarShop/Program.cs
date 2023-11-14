@@ -1,4 +1,6 @@
 using CarShop;
+using CarShop.Domain.Models;
+using CarShop.Models;
 using CarShop.Services.CarCategoryService;
 using CarShop.Services.CarService;
 
@@ -7,9 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
 builder.Services.AddScoped<ICarCategoryService, MemoryCarCategoryService>();
 builder.Services.AddScoped<ICarService, MemoryCarService>();
+builder.Services.AddScoped<Cart>(sp => SessionCart.GetCart(sp));
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 
 var uriData = builder.Configuration.GetSection("UriData").Get<UriData>();
 
@@ -57,6 +67,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages().RequireAuthorization();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
