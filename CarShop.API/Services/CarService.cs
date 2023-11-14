@@ -13,11 +13,13 @@ namespace CarShop.API.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AppDbContext _dbContext;
 
-        public CarService(AppDbContext dbContext,  IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor) 
+        public CarService(AppDbContext dbContext,  
+            IWebHostEnvironment env, 
+            IHttpContextAccessor httpContextAccessor) 
         {
             _dbContext = dbContext;
             _car = dbContext.Cars;
-            _imagesPath = Path.Combine(env.WebRootPath, "Images");
+            _imagesPath = Path.Combine(env?.WebRootPath ?? "", "Images");
             _httpContextAccessor = httpContextAccessor;
         }
         public async Task<ResponseData<Car>> CreateProductAsync(Car product)
@@ -64,14 +66,14 @@ namespace CarShop.API.Services
             if (pageSize > _maxPageSize)
                 pageSize = _maxPageSize;
 
-            var query = _car.AsQueryable();
+            var query = _car.Include(f => f.Category).AsQueryable();
             var dataList = new ListModel<Car>();
 
             query = query.Where(d => categoryNormalizedName == null
-            || d.Category.NormalizedName.Equals(categoryNormalizedName));
+            || d.Category!.NormalizedName.Equals(categoryNormalizedName));
             
             // количество элементов в списке
-            var count = await query.CountAsync();
+            var count = query.Count();
             if (count == 0)
             {
                 return new ResponseData<ListModel<Car>>

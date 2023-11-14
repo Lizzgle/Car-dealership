@@ -11,7 +11,8 @@ namespace CarShop.Controllers
     {
         private readonly ICarService _carService;
         private readonly ICarCategoryService _carCategoryService;
-        public CarController(ICarService carService, ICarCategoryService categoryService)
+        public CarController(ICarService carService, 
+            ICarCategoryService categoryService)
         {
             _carService = carService;
             _carCategoryService = categoryService;
@@ -24,14 +25,14 @@ namespace CarShop.Controllers
 
             ResponseData<List<CarCategory>> categories = await _carCategoryService.GetCategoryListAsync();
 
+            if (!categories.Success)
+                return NotFound(categories.ErrorMessage);
+
             ViewData["currentCategory"] = categories.Data
                                             .FirstOrDefault(c => c.NormalizedName.Equals(category))?
                                             .Name ?? "Все";
-            
-            if (categories.Success)
-            {
-                ViewData["categories"] = categories.Data;
-            }
+
+            ViewData["categories"] = categories.Data;
 
             if (!productResponse.Success)
                 return NotFound(productResponse.ErrorMessage);
@@ -40,7 +41,7 @@ namespace CarShop.Controllers
             {
                 return PartialView("_CarsPartial", productResponse.Data);
             }
-            return View(productResponse.Data);
+            return View("Index",productResponse.Data);
         }
     }
 }

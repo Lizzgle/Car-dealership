@@ -2,8 +2,14 @@
 {
     public static class AjaxRequestExtension
     {
+
         public static bool IsAjaxRequest(this HttpRequest request)
         {
+            if (request == null)
+            {
+                // Обработка ситуации, когда request является null
+                return false;
+            }
             return request.Headers["X-Requested-With"] == "XMLHttpRequest";
         }
     }
