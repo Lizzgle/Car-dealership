@@ -7,7 +7,6 @@
         {
             if (request == null)
             {
-                // Обработка ситуации, когда request является null
                 return false;
             }
             return request.Headers["X-Requested-With"] == "XMLHttpRequest";

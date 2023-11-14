@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Net;
+using Xunit;
 
 namespace CarShop.Tests.Controllers
 {
