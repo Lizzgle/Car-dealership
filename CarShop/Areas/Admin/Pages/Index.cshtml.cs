@@ -24,9 +24,9 @@ namespace CarShop.Areas.Admin.Pages
 
         public IList<Car> Car { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? pageno)
+        public async Task<IActionResult> OnGetAsync(int? pageno, string? category)
         {
-            ResponseData<ListModel<Car>> requestCar = await _carService.GetProductListAsync(null, pageno ?? -1);
+            ResponseData<ListModel<Car>> requestCar = await _carService.GetProductListAsync(category, pageno ?? -1);
 
             if (!requestCar.Success)
                 return NotFound();
