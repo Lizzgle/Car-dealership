@@ -19,7 +19,7 @@ namespace CarShop.Controllers
                 });
         }
 
-        [HttpPost]
+        //[HttpPost]
         public async Task Logout()
         {
             await HttpContext.SignOutAsync("cookie");

@@ -21,13 +21,13 @@ namespace CarShop.Tests.Controllers
             _mockCategoryService = new();
             _mockCarService = new();
             _controller = new(_mockCarService.Object,
-                _mockCategoryService.Object);
-            //{
-            //    ControllerContext = new ControllerContext()
-            //    {
-            //        HttpContext = new DefaultHttpContext()
-            //    }
-            //};
+                _mockCategoryService.Object)
+            {
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = new DefaultHttpContext()
+                }
+            };
         }
 
 
@@ -47,13 +47,13 @@ namespace CarShop.Tests.Controllers
         public void Index_InvalidCarList_ReturnsNotFound()
         {
             _mockCategoryService.Setup(service => service.GetCategoryListAsync().Result)
-                .Returns(new Domain.Models.ResponseData<List<Domain.Entities.CarCategory>>()
+                .Returns(new ResponseData<List<Domain.Entities.CarCategory>>()
                 {
                     Success = true,
-                    Data = new List<Domain.Entities.CarCategory>()
+                    Data = new List<CarCategory>()
                     {
-                        new Domain.Entities.CarCategory () { Id = 1, Name = "Test 1", NormalizedName = "test1"},
-                        new Domain.Entities.CarCategory() { Id = 2, Name = "Test 2", NormalizedName = "test2"},
+                        new CarCategory () { Id = 1, Name = "Test 1", NormalizedName = "test1"},
+                        new CarCategory() { Id = 2, Name = "Test 2", NormalizedName = "test2"},
                     }
                 });
 
@@ -90,9 +90,9 @@ namespace CarShop.Tests.Controllers
                         TotalPages = 1,
                         Items = new List<Car>()
                         {
-                            new Car() { Id = 1, CategoryId = 1, Name = "Furniture 1", Price = 1},
-                            new Car() { Id = 2, CategoryId = 1, Name = "Furniture 2", Price = 1},
-                            new Car() { Id = 3, CategoryId = 1, Name = "Furniture 3", Price = 1},
+                            new Car() { Id = 1, CategoryId = 1, Name = "Car 1", Price = 1},
+                            new Car() { Id = 2, CategoryId = 1, Name = "Car 2", Price = 1},
+                            new Car() { Id = 3, CategoryId = 1, Name = "Car 3", Price = 1},
                         }
 
                     }
@@ -135,9 +135,9 @@ namespace CarShop.Tests.Controllers
                         TotalPages = 1,
                         Items = new List<Car>()
                         {
-                            new Car() { Id = 1, CategoryId = 1, Name = "Furniture 1", Price = 1},
-                            new Car() { Id = 2, CategoryId = 1, Name = "Furniture 2", Price = 1},
-                            new Car() { Id = 3, CategoryId = 1, Name = "Furniture 3", Price = 1},
+                            new Car() { Id = 1, CategoryId = 1, Name = "Car 1", Price = 1},
+                            new Car() { Id = 2, CategoryId = 1, Name = "Car 2", Price = 1},
+                            new Car() { Id = 3, CategoryId = 1, Name = "Car 3", Price = 1},
                         }
 
                     }

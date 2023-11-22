@@ -48,6 +48,19 @@ namespace CarShop.IdentifyServer
                 AllowOfflineAccess = true,
                 AllowedScopes = { "openid", "profile", "api.read", "api.write" }
             },
+            new Client
+            {
+                ClientId = "blazorApp",
+                AllowedGrantTypes = GrantTypes.Code,
+                RequireClientSecret = false,
+                AllowedCorsOrigins = { "https://localhost:7068" },
+                RedirectUris = {
+                    "https://localhost:7068/authentication/login-callback" },
+                PostLogoutRedirectUris = {
+                    "https://localhost:7068/authentication/logout-callback" },
+                AllowOfflineAccess = true,
+                AllowedScopes = { "openid", "profile", "api.read","api.write"}
+            }
             };
     }
 }
