@@ -9,7 +9,9 @@
 
     var categories = ViewData["Categories"] as List<CarCategory>;
 
-    string? category = request.Query["category"].ToString();
+    // string? category = request.Query["category"].ToString();
+
+    string? category = ViewData["category"] as string;
 
     int prev = Model.CurrentPage == 1 ? 1 : Model.CurrentPage - 1;
 

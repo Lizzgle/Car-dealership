@@ -1,4 +1,5 @@
 using CarShop.BlazorWasm;
+using CarShop.BlazorWasm.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -6,7 +7,11 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+string apiUri = builder.Configuration.GetSection("ApiUri").Value;
+
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiUri) });
+
+builder.Services.AddScoped<IDataService, DataService>();
 
 builder.Services.AddOidcAuthentication(options =>
 {
