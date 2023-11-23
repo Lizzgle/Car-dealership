@@ -16,7 +16,6 @@ namespace CarShop.Middleware
 
         public async Task Invoke(HttpContext context)
         {
-            await _next(context);
             try
             {
                 await _next.Invoke(context);

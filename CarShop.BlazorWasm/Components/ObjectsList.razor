@@ -1,7 +1,7 @@
 ﻿@inject IDataService DataService
 @implements IDisposable
 
-<h3>Католог товаров</h3>
+<h3>Каталог товаров</h3>
 
 @if (DataService.Success)
 {
@@ -25,9 +25,10 @@
                         @obj.Name @ind
                     </td>
                     <td>
-                        <button @onclick="(async () => await ObjSelected.InvokeAsync(ind))">
+                        <button type="button" class="btn btn-outline-primary" 
+                        @onclick="(async () => await ObjSelected.InvokeAsync(ind))">
                             <span class="oi oi-zoom-in" aria-hidden="true"></span> Подробнее
-                        </button>
+                    </button>
                     </td>
                 </tr>
             }
