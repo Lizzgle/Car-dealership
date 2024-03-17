@@ -2,7 +2,6 @@
 
 Welcome to the Auto Dealership ASP.NET application! This README provides an overview of the application's features, installation instructions, usage examples, contribution guidelines, and licensing information.
 
-![Auto Dealership](https://example.com/auto-dealership.png)
 
 ## Table of Contents
 
