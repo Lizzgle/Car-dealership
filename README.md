@@ -24,8 +24,6 @@ The Auto Dealership ASP.NET application is a web-based platform designed to stre
 - User authentication and authorization
 - Vehicle inventory management
 - Customer management
-- Sales tracking and reporting
-- Dashboard for analytics and insights
 
 ## Getting Started
 
